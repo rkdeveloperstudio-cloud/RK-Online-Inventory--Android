@@ -925,7 +925,7 @@ async function()
         createReceiptData();
 
 
-        await printReceipt(receipt);
+        await PrinterService.print(receipt);
 
 
         // CLEAR AFTER PRINT
@@ -948,6 +948,267 @@ document
 reprintLastBill;
 
 
+
+// ===============================
+// PRINTER SERVICE CONTROLLER
+// ===============================
+
+const PrinterService =
+{
+
+mode: localStorage.getItem("printMode") || "SHARE",
+
+
+setMode(value)
+{
+
+    this.mode=value;
+
+},
+
+
+async print(receipt)
+{
+
+    if(this.mode==="SHARE")
+    {
+
+        await MobilePrinter.print(receipt);
+
+    }
+    else if(this.mode==="BROWSER")
+    {
+
+        await BrowserPrinter.print(receipt);
+
+    }
+
+}
+
+
+};
+
+
+function loadPrinterSettings()
+{
+
+return {
+
+PrintMode:
+localStorage.getItem("printMode") || "SHARE"
+
+};
+
+}
+
+
+
+
+const MobilePrinter =
+{
+
+async print(receipt)
+{
+
+    let text = createRawBTText(receipt);
+
+
+    if(navigator.share)
+    {
+
+        const file =
+        new File(
+        [
+            text
+        ],
+        "receipt.txt",
+        {
+            type:"text/plain"
+        });
+
+
+        await navigator.share(
+        {
+            files:[file],
+
+            title:"Print Receipt",
+
+            text:"Print Receipt"
+        });
+
+
+    }
+    else
+    {
+
+        alert(
+        "Sharing not supported"
+        );
+
+    }
+
+
+}
+
+};
+
+
+const BrowserPrinter =
+{
+
+async print(receipt)
+{
+
+    await printReceipt(receipt);
+
+}
+
+};
+
+
+
+function createRawBTText(receipt)
+{
+
+
+let r="";
+
+
+r += center(
+receipt.store.name
+);
+
+r += center(
+receipt.store.address
+);
+
+r += center(
+"TRN : "+receipt.store.trn
+);
+
+
+r += "\n";
+
+
+r += line();
+
+
+r +=
+"Invoice : "
++receipt.invoice.number
++"\n";
+
+
+r +=
+"Date : "
++receipt.invoice.date
++"\n";
+
+
+r += line();
+
+
+
+receipt.items.forEach(item=>{
+
+
+r += item.description+"\n";
+
+
+r +=
+item.qty+
+" x "+
+item.price.toFixed(2)
++
+"     "
++
+item.amount.toFixed(2)
++
+"\n";
+
+
+});
+
+
+
+r += line();
+
+
+r +=
+"Subtotal      "
++
+receipt.totals.subtotal.toFixed(2)
++
+"\n";
+
+
+r +=
+"VAT 5%        "
++
+receipt.totals.tax.toFixed(2)
++
+"\n";
+
+
+r += line();
+
+
+
+r +=
+"TOTAL         "
++
+receipt.totals.total.toFixed(2)
++
+"\n";
+
+
+r += line();
+
+
+
+r += center(
+"Thank You"
+);
+
+
+r += "\n\n\n";
+
+
+return r;
+
+}
+
+
+
+function center(text)
+{
+
+let width=32;
+
+let space =
+Math.floor(
+(width-text.length)/2
+);
+
+
+return " ".repeat(
+Math.max(space,0)
+)
++
+text
++
+"\n";
+
+}
+
+
+
+function line()
+{
+
+return "--------------------------------\n";
+
+}
 
 // ===============================
 // LAST BILL REPRINT
@@ -2275,13 +2536,18 @@ this.value
 );
 
 
+localStorage.setItem(
+"printMode",
+this.value
+);
+
+
 showToast(
 "Print Mode : "+this.value
 );
 
 
 };
-
 
 }
 
