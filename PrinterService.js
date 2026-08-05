@@ -1,48 +1,34 @@
 const PrinterService =
 {
 
-    mode:"BROWSER",
+mode: localStorage.getItem("printMode") || "SHARE",
 
 
-    setMode:function(mode)
+setMode(value)
+{
+
+    this.mode=value;
+
+},
+
+
+async print(receipt)
+{
+
+    if(this.mode==="SHARE")
     {
 
-        this.mode=mode;
-
-        let settings =
-        loadPrinterSettings();
-
-
-        settings.PrintMode=mode;
-
-
-        savePrinterSettings(settings);
-
-    },
-
-
-
-    print:function(receipt)
-    {
-
-
-        if(this.mode==="BROWSER")
-        {
-
-            BrowserPrinter.print(receipt);
-
-        }
-
-
-        else if(this.mode==="ESCPOS")
-        {
-
-            ESCPosPrinter.print(receipt);
-
-        }
-
+        await MobilePrinter.print(receipt);
 
     }
+    else if(this.mode==="BROWSER")
+    {
+
+        await BrowserPrinter.print(receipt);
+
+    }
+
+}
 
 
 };
