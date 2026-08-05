@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Sales Summary</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+
+html,
+body{
+
+    width:100%;
+    min-height:100%;
+
+    margin:0;
+
+}
+
+
+
+body{
+
+    min-height:100dvh;
+
+    padding:15px;
+
+    overflow-x:hidden;
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+
+    background:
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #6d28d9,
+        #2563eb,
+        #06b6d4
+    );
+
+
+    background-size:300% 300%;
+
+
+    animation:
+    gradientMove 12s ease infinite;
+
+}
+
+
+
+@keyframes gradientMove{
+
+0%{
+    background-position:0% 50%;
+}
+
+50%{
+    background-position:100% 50%;
+}
+
+100%{
+    background-position:0% 50%;
+}
+
+}
+
+
+
+/* BUTTON */
+
+button {
+
+
+    width:100%;
+
+    max-width:420px;
+
+    padding:17px;
+
+
+    margin:12px auto;
+
+    display:block;
+
+
+    border:none;
+
+
+    border-radius:18px;
+
+
+    font-size:18px;
+
+
+    font-weight:bold;
+
+
+    color:white;
+
+
+    cursor:pointer;
+
+
+    background:
+
+    rgba(255,255,255,.18);
+
+
+    backdrop-filter:
+    blur(12px);
+
+
+    -webkit-backdrop-filter:
+    blur(12px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+    0 15px 30px rgba(0,0,0,.25);
+
+
+
+    transition:.35s;
+
+
+}
+
+
+
+button:hover{
+
+
+    transform:
+    translateY(-4px);
+
+
+    background:
+
+    rgba(255,255,255,.30);
+
+
+    box-shadow:
+
+    0 20px 40px rgba(0,0,0,.35),
+
+    0 0 20px rgba(255,255,255,.3);
+
+
+}
+
+
+
+button:active{
+
+    transform:scale(.96);
+
+}
+
+
+
+
+h2{
+
+
+    text-align:center;
+
+
+    color:white;
+
+
+    font-size:32px;
+
+
+    margin:25px 0;
+
+
+
+    letter-spacing:1px;
+
+
+
+    text-shadow:
+
+    0 5px 15px rgba(0,0,0,.35),
+
+    0 0 20px rgba(255,255,255,.4);
+
+
+}
+
+
+
+
+
+.card{
+
+
+    width:100%;
+
+
+    max-width:420px;
+
+
+    margin:25px auto;
+
+
+
+    padding:30px;
+
+
+
+    border-radius:30px;
+
+
+
+    background:
+
+    rgba(255,255,255,.14);
+
+
+
+    backdrop-filter:
+
+    blur(22px);
+
+
+
+    -webkit-backdrop-filter:
+
+    blur(22px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+
+    0 30px 60px rgba(0,0,0,.30),
+
+
+
+    inset 0 1px 1px rgba(255,255,255,.35);
+
+
+
+    color:white;
+
+
+
+    animation:
+
+    floatingCard 5s ease-in-out infinite;
+
+
+}
+
+
+
+@keyframes floatingCard{
+
+
+0%{
+
+transform:translateY(0);
+
+}
+
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+
+100%{
+
+transform:translateY(0);
+
+}
+
+
+}
+
+
+
+
+.card div:first-child{
+
+
+    text-align:center;
+
+
+    font-size:22px;
+
+
+    font-weight:bold;
+
+
+    opacity:.9;
+
+
+}
+
+
+
+
+
+.amount{
+
+
+    margin-top:20px;
+
+
+
+    font-size:48px;
+
+
+
+    font-weight:900;
+
+
+
+    text-align:center;
+
+
+
+    color:white;
+
+
+
+    text-shadow:
+
+
+    0 5px 15px rgba(0,0,0,.4),
+
+
+    0 0 25px rgba(255,255,255,.5);
+
+
+
+}
+
+
+
+
+
+.small{
+
+
+    margin-top:20px;
+
+
+
+    text-align:center;
+
+
+
+    color:white;
+
+
+
+    opacity:.85;
+
+
+
+    font-size:14px;
+
+
+}
+
+
+
+
+
+#loading{
+
+
+    text-align:center;
+
+
+
+    margin-top:20px;
+
+
+
+    color:white;
+
+
+
+    font-size:18px;
+
+
+
+    font-weight:bold;
+
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+body{
+
+    padding:12px;
+
+}
+
+
+h2{
+
+    font-size:28px;
+
+}
+
+
+.card{
+
+    padding:25px;
+
+    border-radius:25px;
+
+}
+
+
+
+.amount{
+
+    font-size:38px;
+
+}
+
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<button onclick="location.href='index.html'">
+← Home
+</button>
+
+
+<h2>
+Sales Summary
+</h2>
+
+
+<div class="card">
+
+
+<div>
+Total Sales
+</div>
+
+
+<div id="salesAmount" class="amount">
+
+0.00
+
+</div>
+
+
+<div id="updatedTime" class="small">
+
+Last Updated : -
+
+</div>
+
+
+</div>
+
+
+<button onclick="refreshSales()">
+
+Refresh Sales
+
+</button>
+
+
+<div id="loading" style="display:none">
+
+Loading...
+
+</div>
+
+
+<script src="sales.js"></script>
+
+
+</body>
+
+</html>

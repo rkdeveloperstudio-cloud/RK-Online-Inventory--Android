@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory PWA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+   <link rel="manifest" href="./manifest.json">
+
+<style>
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+
+html,
+body{
+
+    width:100%;
+    min-height:100%;
+
+    margin:0;
+
+}
+
+
+
+body{
+
+    min-height:100dvh;
+
+    overflow-x:hidden;
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+
+    padding:15px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #6d28d9,
+        #2563eb,
+        #06b6d4
+    );
+
+
+    background-size:300% 300%;
+
+
+    animation:
+    gradientMove 12s ease infinite;
+
+
+}
+
+
+
+@keyframes gradientMove{
+
+0%{
+    background-position:0% 50%;
+}
+
+
+50%{
+    background-position:100% 50%;
+}
+
+
+100%{
+    background-position:0% 50%;
+}
+
+}
+
+
+
+/* HOME BUTTON */
+
+button{
+
+    width:100%;
+
+    padding:16px;
+
+
+    margin:10px 0;
+
+
+    border:none;
+
+
+    border-radius:16px;
+
+
+    font-size:17px;
+
+
+    font-weight:bold;
+
+
+    color:white;
+
+
+    cursor:pointer;
+
+
+    background:
+
+    rgba(255,255,255,.18);
+
+
+
+    backdrop-filter:
+
+    blur(12px);
+
+
+
+    -webkit-backdrop-filter:
+
+    blur(12px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+    0 10px 25px rgba(0,0,0,.20),
+
+
+    inset 0 1px 1px rgba(255,255,255,.25);
+
+
+
+    transition:
+
+    transform .3s,
+    background .3s,
+    box-shadow .3s;
+
+}
+
+
+
+button:hover{
+
+    transform:
+
+    translateY(-3px);
+
+
+    background:
+
+    rgba(255,255,255,.30);
+
+
+
+    box-shadow:
+
+
+    0 15px 35px rgba(0,0,0,.25),
+
+    0 0 20px rgba(255,255,255,.25);
+
+}
+
+
+
+button:active{
+
+    transform:
+
+    scale(.97);
+
+}
+
+
+
+
+
+h3{
+
+
+    text-align:center;
+
+
+    color:white;
+
+
+    font-size:30px;
+
+
+    margin:20px 0 25px;
+
+
+
+    text-shadow:
+
+
+    0 4px 10px rgba(0,0,0,.3),
+
+    0 0 20px rgba(255,255,255,.4);
+
+
+}
+
+
+
+h4{
+
+    color:white;
+
+    margin-top:0;
+
+    font-size:18px;
+
+}
+
+
+
+
+/* SEARCH BOX */
+
+
+.box{
+
+
+    background:
+
+    rgba(255,255,255,.14);
+
+
+
+    backdrop-filter:
+
+    blur(20px);
+
+
+
+    -webkit-backdrop-filter:
+
+    blur(20px);
+
+
+
+    padding:20px;
+
+
+    margin-bottom:18px;
+
+
+    border-radius:25px;
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+    0 20px 40px rgba(0,0,0,.25),
+
+
+    inset 0 1px 1px rgba(255,255,255,.25);
+
+
+
+}
+
+
+
+
+/* INPUT */
+
+
+input{
+
+
+    width:100%;
+
+
+    padding:15px;
+
+
+    border:none;
+
+
+    outline:none;
+
+
+    border-radius:15px;
+
+
+
+    font-size:16px;
+
+
+
+    background:
+
+    rgba(255,255,255,.9);
+
+
+
+    box-shadow:
+
+
+    inset 0 3px 8px rgba(0,0,0,.15);
+
+
+
+}
+
+
+
+
+/* RESULT CARDS */
+
+
+#results div{
+
+
+    background:
+
+    rgba(255,255,255,.90);
+
+
+
+    padding:15px;
+
+
+
+    margin-bottom:12px;
+
+
+    border-radius:18px;
+
+
+
+    box-shadow:
+
+
+    0 10px 25px rgba(0,0,0,.18);
+
+
+
+}
+
+
+
+
+
+/* SCANNER */
+
+
+#scannerContainer{
+
+
+    position:fixed;
+
+
+    top:50%;
+
+
+    left:50%;
+
+
+    transform:
+
+    translate(-50%,-50%);
+
+
+
+    width:90%;
+
+
+    max-width:420px;
+
+
+
+    height:220px;
+
+
+
+    background:black;
+
+
+
+    border-radius:25px;
+
+
+
+    overflow:hidden;
+
+
+
+    display:none;
+
+
+
+    z-index:9999;
+
+
+
+    box-shadow:
+
+
+    0 30px 70px rgba(0,0,0,.5),
+
+
+    0 0 30px rgba(0,255,200,.4);
+
+
+
+}
+
+
+
+
+
+#scannerVideo{
+
+
+    width:100%;
+
+
+    height:100%;
+
+
+    object-fit:cover;
+
+
+}
+
+
+
+
+
+.scan-line{
+
+
+    position:absolute;
+
+
+    width:100%;
+
+
+    height:3px;
+
+
+    background:#00ffcc;
+
+
+    box-shadow:
+
+
+    0 0 15px #00ffcc;
+
+
+
+    animation:
+
+    move 1.2s infinite;
+
+
+}
+
+
+
+
+
+@keyframes move{
+
+
+0%{
+
+top:10%;
+
+}
+
+
+50%{
+
+top:90%;
+
+}
+
+
+100%{
+
+top:10%;
+
+}
+
+
+}
+
+
+
+
+#closeBtn{
+
+
+    position:absolute;
+
+
+    top:10px;
+
+
+    right:10px;
+
+
+
+    width:auto;
+
+
+    padding:8px 14px;
+
+
+
+    background:red;
+
+
+
+    color:white;
+
+
+
+    z-index:10;
+
+
+
+}
+
+
+
+
+
+@media(max-width:600px){
+
+
+body{
+
+    padding:12px;
+
+}
+
+
+h3{
+
+    font-size:26px;
+
+}
+
+
+.box{
+
+    padding:16px;
+
+}
+
+
+}
+
+</style>
+</head>
+
+<body>
+<button onclick="location.href='./index.html'">
+🏠 Home
+</button>
+
+<h3>Inventory Search</h3>
+
+<div class="box">
+    <h4>Barcode Search</h4>
+    <input
+    id="barcodeBox"
+    placeholder="Enter barcode"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false">
+    <button onclick="searchByBarcode()">Search Barcode</button>
+    <button onclick="openScanner()">Open Camera Scan</button>
+</div>
+
+<div class="box">
+    <h4>Keyword Search</h4>
+    <input
+    id="keywordBox"
+    placeholder="Enter keyword"
+    autocomplete="off"
+    spellcheck="false">
+    <button onclick="searchByKeyword()">Search</button>
+</div>
+
+<div id="results"></div>
+
+<!-- Scanner -->
+<div id="scannerContainer">
+    <button id="closeBtn" onclick="closeScanner()">X</button>
+    <video id="scannerVideo" playsinline autoplay muted></video>
+    <div class="scan-line"></div>
+</div>
+
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+<script src="app.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.log("SW failed", err));
+}
+</script>
+</body>
+</html>

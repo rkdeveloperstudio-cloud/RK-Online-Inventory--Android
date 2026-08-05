@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" 
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+<title>Order Report</title>
+
+
+<link rel="manifest" href="./manifest.json">
+
+<link rel="apple-touch-icon" href="./icon-192.PNG">
+
+<meta name="theme-color" content="#667eea">
+
+
+
+<style>
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+
+html,
+body{
+
+    width:100%;
+    min-height:100%;
+
+    margin:0;
+
+}
+
+
+
+body{
+
+    min-height:100dvh;
+
+    overflow-x:hidden;
+
+    font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+
+    padding:15px;
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #4f46e5,
+        #6d28d9,
+        #2563eb,
+        #06b6d4
+    );
+
+
+    background-size:300% 300%;
+
+
+    animation:
+    gradientMove 12s ease infinite;
+
+
+}
+
+
+
+@keyframes gradientMove{
+
+0%{
+    background-position:0% 50%;
+}
+
+
+50%{
+    background-position:100% 50%;
+}
+
+
+100%{
+    background-position:0% 50%;
+}
+
+}
+
+
+
+
+.container{
+
+    width:100%;
+
+    max-width:1100px;
+
+    margin:auto;
+
+}
+
+
+
+
+
+/* HEADER */
+
+
+.header{
+
+
+    padding:20px;
+
+
+    border-radius:28px;
+
+
+
+    background:
+
+    rgba(255,255,255,.14);
+
+
+
+    backdrop-filter:
+
+    blur(22px);
+
+
+
+    -webkit-backdrop-filter:
+
+    blur(22px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+    0 25px 50px rgba(0,0,0,.25);
+
+
+
+    text-align:center;
+
+
+    color:white;
+
+
+}
+
+
+
+.header h2{
+
+
+    margin:0;
+
+
+    font-size:32px;
+
+
+    text-shadow:
+
+
+    0 4px 10px rgba(0,0,0,.3);
+
+
+}
+
+
+
+
+
+.back{
+
+
+    display:inline-block;
+
+
+    margin-top:15px;
+
+
+    padding:12px 30px;
+
+
+    border-radius:20px;
+
+
+    color:white;
+
+
+    text-decoration:none;
+
+
+    font-weight:bold;
+
+
+
+    background:
+
+    rgba(255,255,255,.18);
+
+
+
+    backdrop-filter:
+
+    blur(10px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+}
+
+
+
+
+
+
+
+/* GLASS CARDS */
+
+
+.card{
+
+
+    margin-top:20px;
+
+
+    padding:20px;
+
+
+    border-radius:25px;
+
+
+
+    background:
+
+    rgba(255,255,255,.14);
+
+
+
+    backdrop-filter:
+
+    blur(20px);
+
+
+
+    -webkit-backdrop-filter:
+
+    blur(20px);
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+    0 25px 50px rgba(0,0,0,.25);
+
+
+
+}
+
+
+
+
+
+.row{
+
+
+    display:flex;
+
+
+    gap:15px;
+
+
+    margin-bottom:15px;
+
+
+}
+
+
+
+
+
+.field{
+
+
+    flex:1;
+
+
+}
+
+
+
+
+
+label{
+
+
+    display:block;
+
+
+    font-weight:bold;
+
+
+    margin-bottom:6px;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+input,
+select{
+
+
+    width:100%;
+
+
+    padding:14px;
+
+
+    border:none;
+
+
+    outline:none;
+
+
+
+    border-radius:15px;
+
+
+    font-size:15px;
+
+
+
+    background:
+
+    rgba(255,255,255,.9);
+
+
+
+    box-shadow:
+
+
+    inset 0 3px 8px rgba(0,0,0,.15);
+
+
+
+}
+
+
+
+
+
+
+input:focus,
+select:focus{
+
+
+    box-shadow:
+
+
+    0 0 15px rgba(255,255,255,.6);
+
+
+}
+
+
+
+
+
+
+
+/* MAIN BUTTON */
+
+
+.main-btn{
+
+
+    width:100%;
+
+
+    padding:17px;
+
+
+    border:none;
+
+
+    border-radius:18px;
+
+
+
+    background:
+
+    rgba(255,255,255,.20);
+
+
+
+    backdrop-filter:
+
+    blur(10px);
+
+
+
+    color:white;
+
+
+
+    font-size:18px;
+
+
+    font-weight:bold;
+
+
+
+    cursor:pointer;
+
+
+
+    border:
+
+    1px solid rgba(255,255,255,.25);
+
+
+
+    box-shadow:
+
+
+    0 10px 25px rgba(0,0,0,.25);
+
+
+}
+
+
+
+
+
+.main-btn:hover{
+
+
+    transform:
+
+    translateY(-3px);
+
+
+}
+
+
+
+
+
+
+
+#reportStatus,
+#countStatus{
+
+
+    margin-top:15px;
+
+
+    padding:12px;
+
+
+
+    background:
+
+
+    rgba(255,255,255,.85);
+
+
+
+    border-radius:15px;
+
+
+
+    text-align:center;
+
+
+    font-weight:bold;
+
+
+}
+
+
+
+
+
+
+#loading{
+
+
+    color:white;
+
+    text-align:center;
+
+}
+
+
+
+
+
+
+#errorMessage{
+
+
+    background:white;
+
+    border-radius:10px;
+
+}
+
+
+
+
+
+
+
+/* TABLE AREA */
+
+
+.table-title{
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    align-items:center;
+
+
+}
+
+
+
+
+
+.table-title h3{
+
+
+    color:white;
+
+}
+
+
+
+
+
+.share-btn{
+
+
+    padding:12px 25px;
+
+
+    border:none;
+
+
+    border-radius:25px;
+
+
+
+    background:
+
+    linear-gradient(
+        135deg,
+        #25D366,
+        #128C7E
+    );
+
+
+
+    color:white;
+
+
+    font-weight:bold;
+
+
+}
+
+
+
+
+
+
+.table-container{
+
+    width:100%;
+
+    margin-top:15px;
+
+    overflow:hidden;
+
+    border-radius:20px;
+
+}
+    
+
+table{
+
+    width:100%;
+
+    table-layout:fixed;
+
+    border-collapse:collapse;
+
+    background:
+    rgba(255,255,255,.9);
+
+}
+
+
+th{
+
+    background:
+    linear-gradient(
+        135deg,
+        #667eea,
+        #764ba2
+    );
+
+    color:white;
+
+    padding:10px;
+
+    font-size:13px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:2;
+
+}
+
+
+td{
+
+    padding:8px;
+
+    font-size:12px;
+
+    color:#333;
+
+    border-bottom:
+    1px solid #ddd;
+
+    word-break:break-word;
+
+    overflow-wrap:anywhere;
+
+}
+    
+
+    th:nth-child(1),
+td:nth-child(1){
+
+    width:35px;
+
+    text-align:center;
+
+}
+
+
+th:nth-child(2),
+td:nth-child(2){
+
+    width:22%;
+
+}
+
+
+th:nth-child(3),
+td:nth-child(3){
+
+    width:35%;
+
+}
+
+
+th:nth-child(4),
+td:nth-child(4),
+th:nth-child(5),
+td:nth-child(5){
+
+    width:12%;
+
+    text-align:center;
+
+}
+
+
+th:nth-child(6),
+td:nth-child(6){
+
+    width:15%;
+
+    text-align:center;
+
+}
+
+.reorder{
+
+
+    width:60px;
+
+    padding:6px;
+
+}
+
+
+
+
+
+
+
+@media(max-width:700px){
+
+
+body{
+
+    padding:12px;
+
+}
+
+
+
+.row{
+
+    flex-direction:column;
+
+}
+
+
+
+.header h2{
+
+    font-size:25px;
+
+}
+
+
+
+.card{
+
+    padding:16px;
+
+}
+
+
+
+.table-title{
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+
+.share-btn{
+
+    width:100%;
+
+}
+th,
+td{
+
+    padding:6px;
+
+    font-size:11px;
+
+}
+
+
+.table-container{
+
+    overflow:hidden;
+
+}
+
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+
+<body>
+
+
+
+    <div class="container">
+
+
+
+        <div class="header">
+
+
+            <h2>
+                📋 Order Report
+            </h2>
+
+
+            <a href="index.html" class="back">
+                ← Back
+            </a>
+
+
+        </div>
+
+
+
+
+
+
+        <div class="card">
+
+
+
+            <div class="row">
+
+
+                <div class="field">
+
+                    <label>
+                        Purchase From
+                    </label>
+
+                    <input type="date" id="purchaseFrom">
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Purchase To
+                    </label>
+
+                    <input type="date" id="purchaseTo">
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <div class="row">
+
+
+                <div class="field">
+
+                    <label>
+                        Sales From
+                    </label>
+
+                    <input type="date" id="salesFrom">
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label>
+                        Sales To
+                    </label>
+
+                    <input type="date" id="salesTo">
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+            <div class="row">
+
+
+                <div class="field">
+
+                    <label>
+                        Supplier
+                    </label>
+
+                  <input
+type="text"
+id="supplierSearch"
+list="supplierList"
+placeholder="Search Supplier">
+
+<datalist id="supplierList">
+
+</datalist>
+
+
+                </div>
+
+
+
+
+                <div class="field">
+
+                    <label>
+                        Category
+                    </label>
+
+<input
+type="text"
+id="categorySearch"
+list="categoryList"
+placeholder="Search Category">
+
+<datalist id="categoryList">
+
+</datalist>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+            <div class="row">
+
+
+                <div class="field">
+
+                    <label>
+                        Minimum Sale Qty
+                    </label>
+
+                    <input type="number" id="minQty" value="0">
+
+
+                </div>
+
+
+
+
+                <div class="field">
+
+                    <label>
+                        Stock Less Than
+                    </label>
+
+                    <input type="number" id="stockFilter">
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <button class="main-btn" id="btnLoad">
+
+                LOAD REPORT
+
+            </button>
+
+
+        </div>
+
+
+<div id="reportStatus"
+style="
+margin-top:15px;
+padding:12px;
+background:#f5f5f5;
+border-radius:10px;
+text-align:center;
+font-weight:bold;">
+Ready
+</div>
+
+
+<div id="loading"
+style="
+display:none;
+text-align:center;
+padding:10px;
+font-weight:bold;">
+⏳ Processing...
+</div>
+
+<div id="errorMessage"
+style="
+display:none;
+color:red;
+text-align:center;
+padding:10px;
+font-weight:bold;">
+</div>
+
+<div id="countStatus">
+    Loaded: 0 / 0
+</div>
+
+        <div class="card">
+
+
+            <div class="table-title">
+
+                <h3>
+                    Products
+                </h3>
+
+
+                <button class="share-btn" id="btnPdf">
+                    📄 Share PDF
+                </button>
+
+
+            </div>
+
+
+
+
+
+
+            <div class="table-container">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                <input type="checkbox" id="selectAll">
+                            </th>
+
+
+                            <th>
+                                Supplier
+                            </th>
+
+
+                            <th>
+                                Description
+                            </th>
+
+
+                            <th>
+                                Stock
+                            </th>
+
+
+                            <th>
+                                Sold
+                            </th>
+
+
+                            <th>
+                                Reorder
+                            </th>
+
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody id="productTable">
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.2/jspdf.plugin.autotable.min.js"></script>
+
+<script src="order-report.js"></script>
+
+</body>
+
+</html>
