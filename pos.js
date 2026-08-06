@@ -34,6 +34,10 @@ let PAPER_WIDTH =
 Number(localStorage.getItem("printerWidth")) || 58;
 
 
+let PRINT_MODE =
+localStorage.getItem("printMode") || "pdf";
+
+
 function getPrintableWidth()
 {
     return PAPER_WIDTH === 58 ? 48 : 72;
@@ -918,25 +922,44 @@ async function()
     await saveBill();
 
 
-    if(saved)
+    if(!saved)
+        return;
+
+
+
+    let receipt =
+    createReceiptData();
+
+
+
+    if(PRINT_MODE === "text")
     {
 
-        let receipt =
-        createReceiptData();
+        await shareTextReceipt(receipt);
 
+    }
+    else if(PRINT_MODE === "escpos")
+    {
+
+        await printESCPos(receipt);
+
+    }
+    else
+    {
 
         await printReceipt(receipt);
 
-
-        // CLEAR AFTER PRINT
-        clearBill();
-
-
-        document
-        .getElementById("barcodeInput")
-        .focus();
-
     }
+
+
+
+    clearBill();
+
+
+    document
+    .getElementById("barcodeInput")
+    .focus();
+
 
 };
 
@@ -1291,7 +1314,44 @@ pdf.text(
     y,
     {align:"center"}
 );
-await printPDF(pdf);
+let receipt = {
+
+    invoice:{
+        number:master.invoice_no,
+        date:new Date(master.sale_date).toLocaleString()
+    },
+
+    items:details.map(item=>({
+
+        description:item.description,
+        qty:Number(item.qty),
+        price:Number(item.price),
+        amount:Number(item.amount)
+
+    })),
+
+    totals:{
+        subtotal:Number(master.subtotal),
+        tax:Number(master.tax_amount),
+        total:Number(master.grand_total)
+    }
+
+};
+
+
+if(PRINT_MODE === "text")
+{
+    await shareTextReceipt(receipt);
+}
+else if(PRINT_MODE === "escpos")
+{
+    await printESCPos(receipt);
+}
+else
+{
+    await printPDF(pdf);
+}
+
 }
 
 // ===============================
@@ -1432,22 +1492,22 @@ document
 .getElementById("oldBillsBtn")
 .onclick=function()
 {
+    clearOldBillSearch();
 
-document
-.getElementById("oldBillsPanel")
-.classList.add("active");
-
+    document
+    .getElementById("oldBillsPanel")
+    .classList.add("active");
 };
 
 document
 .getElementById("closeOldBills")
 .onclick=function()
 {
+    clearOldBillSearch();
 
-document
-.getElementById("oldBillsPanel")
-.classList.remove("active");
-
+    document
+    .getElementById("oldBillsPanel")
+    .classList.remove("active");
 };
 
 async function searchOldBills()
@@ -1569,7 +1629,7 @@ document.getElementById("oldBillsPanel").classList.remove("active");
 document.getElementById("oldBillResultPage").classList.add("active");
 
 showOldBillCards(bills);
-
+clearOldBillSearch();
 }
 
 
@@ -1696,7 +1756,18 @@ total:Number(master[0].grand_total)
 
 
 
-await printReceipt(receipt);
+if(PRINT_MODE === "text")
+{
+    await shareTextReceipt(receipt);
+}
+else if(PRINT_MODE === "escpos")
+{
+    await printESCPos(receipt);
+}
+else
+{
+    await printReceipt(receipt);
+}
 
 }
 
@@ -1756,30 +1827,215 @@ async function printPDF(pdf)
 {
     const blob = pdf.output("blob");
 
-    const url = URL.createObjectURL(blob);
-
-
-    const printWindow = window.open(
-        url,
-        "_blank"
+    const file = new File(
+        [blob],
+        "Receipt.pdf",
+        {
+            type:"application/pdf"
+        }
     );
 
 
-    if(!printWindow)
+    if(navigator.canShare &&
+       navigator.canShare({files:[file]}))
     {
-        showToast("Please allow popup for printing");
+
+        await navigator.share({
+            files:[file],
+            title:"Receipt",
+            text:"Customer Receipt"
+        });
+
+    }
+    else
+    {
+
+        const url =
+        URL.createObjectURL(blob);
+
+
+        const a=document.createElement("a");
+
+        a.href=url;
+
+        a.download="Receipt.pdf";
+
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+    }
+
+}
+
+
+
+
+
+async function printESCPos(receipt)
+{
+
+    if(typeof ESCPosPrinter === "undefined")
+    {
+        showToast(
+            "ESC/POS printer module not loaded",
+            "error"
+        );
+
         return;
     }
 
 
-    printWindow.onload = function()
-    {
-        printWindow.focus();
-        printWindow.print();
-    };
+    await ESCPosPrinter.print(receipt);
+
+}
+
+
+
+
+
+async function shareTextReceipt(receipt)
+{
+
+
+let width =
+PAPER_WIDTH === 58 ? 32 : 48;
+
+
+
+let line =
+"-".repeat(width);
+
+
+
+let text="";
+
+
+text +=
+"AL QARAT SHOPPING CENTER\n";
+
+
+text +=
+"Abu Dhabi UAE\n";
+
+
+text +=
+"TRN : 100547377000003\n";
+
+
+text += line+"\n";
+
+
+text +=
+"Invoice : "
++
+receipt.invoice.number
++
+"\n";
+
+
+text +=
+"Date : "
++
+receipt.invoice.date
++
+"\n";
+
+
+text += line+"\n";
+
+
+
+receipt.items.forEach(item=>{
+
+
+text +=
+item.description
++
+"\n";
+
+
+text +=
+item.qty
++
+" x "
++
+item.price.toFixed(2)
++
+"     "
++
+item.amount.toFixed(2)
++
+"\n";
+
+
+});
+
+
+text += line+"\n";
+
+
+text +=
+"Subtotal : "
++
+receipt.totals.subtotal.toFixed(2)
++
+"\n";
+
+
+text +=
+"VAT 5% : "
++
+receipt.totals.tax.toFixed(2)
++
+"\n";
+
+
+text += line+"\n";
+
+
+text +=
+"TOTAL : "
++
+receipt.totals.total.toFixed(2)
++
+"\n";
+
+
+text += line+"\n";
+
+
+text +=
+"Thank You\n";
+
+
+text +=
+"Visit Again";
+
+
+
+if(navigator.share)
+{
+
+await navigator.share(
+{
+text:text
+});
+
+}
+
+else
+{
+
+alert(text);
+
+}
 
 
 }
+
+
+
 
 function createReceiptData()
 {
@@ -2258,30 +2514,27 @@ document.getElementById("printMode");
 if(printMode)
 {
 
-let settings =
-loadPrinterSettings();
-
-
-printMode.value =
-settings.PrintMode;
-
+printMode.value = PRINT_MODE;
 
 
 printMode.onchange=function()
 {
 
-PrinterService.setMode(
-this.value
+PRINT_MODE=this.value;
+
+
+localStorage.setItem(
+"printMode",
+PRINT_MODE
 );
 
 
 showToast(
-"Print Mode : "+this.value
+"Print Mode : "+PRINT_MODE
 );
 
 
 };
-
 
 }
 
@@ -2330,4 +2583,18 @@ function showToast(message,type="success")
 
     },2500);
 
+}
+
+
+function clearOldBillSearch()
+{
+    document.getElementById("oldInvoiceSearch").value = "";
+
+    document.getElementById("billFromDate").value = "";
+
+    document.getElementById("billToDate").value = "";
+
+    document.getElementById("amountFrom").value = "";
+
+    document.getElementById("amountTo").value = "";
 }
